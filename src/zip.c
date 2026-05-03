@@ -373,7 +373,10 @@ static int zip_mkpath(char *path, size_t pos) {
   struct MZ_FILE_STAT_STRUCT st;
 
   memset(npath, 0, MZ_ZIP_MAX_ARCHIVE_FILENAME_SIZE + 1);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-truncation"
   strncpy(npath, path, len);
+#pragma GCC diagnostic pop
 
   if (MZ_FILE_STAT(npath, &st) < 0) {
     return ZIP_ENOFILE;
@@ -582,7 +585,10 @@ static int zip_archive_extract(mz_zip_archive *zip_archive, const char *dir,
 #if defined(_MSC_VER)
     strncpy_s(&path[dirlen], filename_size, info.m_filename, filename_size);
 #else
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-truncation"
     strncpy(&path[dirlen], info.m_filename, filename_size);
+#pragma GCC diagnostic pop
 #endif
 
     err = zip_mkpath(path, dirlen);
